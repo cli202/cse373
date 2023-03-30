@@ -6,7 +6,6 @@ import datastructures.LinkedIntList.ListNode;
 
 /**
  * See the spec on the website for example behavior.
- *
  * REMEMBER THE FOLLOWING RESTRICTIONS:
  * - do not call any methods on the `LinkedIntList` objects.
  * - do not construct new `ListNode` objects for `reverse3` or `firstToLast`
@@ -22,16 +21,27 @@ public class LinkedIntListProblems {
      * Reverses the 3 elements in the `LinkedIntList` (assume there are exactly 3 elements).
      */
     public static void reverse3(LinkedIntList list) {
-        // TODO replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        ListNode newFront = list.front.next.next;
+        newFront.next = list.front.next;
+        newFront.next.next = list.front;
+        list.front.next = null;
+        list.front = newFront;
     }
 
     /**
      * Moves the first element of the input list to the back of the list.
      */
     public static void firstToLast(LinkedIntList list) {
-        // TODO replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (list.front != null && list.front.next != null) {
+            ListNode back = list.front;
+            while (back.next != null) {
+                back = back.next;
+            }
+            ListNode newFront = list.front.next;
+            back.next = list.front;
+            list.front.next = null;
+            list.front = newFront;
+        }
     }
 
     /**
@@ -39,8 +49,41 @@ public class LinkedIntListProblems {
      * of n. Does not modify items of A or B.
      */
     public static LinkedIntList concatenate(LinkedIntList a, LinkedIntList b) {
-        // Hint: you'll need to use the 'new' keyword to construct new objects.
-        // TODO replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        LinkedIntList result = new LinkedIntList();
+        ListNode resultCurrent;
+        boolean aIsNull = a.front == null;
+        boolean bIsNull = b.front == null;
+        if (!aIsNull) {
+            result.front = new ListNode(a.front.data);
+            resultCurrent = result.front;
+            ListNode aCurrent = a.front;
+            while (aCurrent.next != null) {
+                resultCurrent.next = new ListNode(aCurrent.next.data);
+                resultCurrent = resultCurrent.next;
+                aCurrent = aCurrent.next;
+            }
+            if (!bIsNull) {
+                resultCurrent.next = new ListNode(b.front.data);
+                resultCurrent = resultCurrent.next;
+                ListNode bCurrent = b.front;
+                while (bCurrent.next != null) {
+                    resultCurrent.next = new ListNode(bCurrent.next.data);
+                    resultCurrent = resultCurrent.next;
+                    bCurrent = bCurrent.next;
+                }
+            }
+            // return result;
+        }
+        if (aIsNull && !bIsNull) {
+            result.front = new ListNode(b.front.data);
+            resultCurrent = result.front;
+            ListNode bCurrent = b.front;
+            while (bCurrent.next != null) {
+                resultCurrent.next = new ListNode(bCurrent.next.data);
+                resultCurrent = resultCurrent.next;
+                bCurrent = bCurrent.next;
+            }
+        }
+        return result;
     }
 }
