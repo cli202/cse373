@@ -13,7 +13,10 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
 
     public LinkedDeque() {
         size = 0;
-        // TODO: replace this with your code
+        front = new Node(0);
+        back = new Node(0);
+        front.next = back;
+        back.prev = front;
     }
 
     public void addFirst(T item) {
