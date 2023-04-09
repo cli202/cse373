@@ -24,15 +24,19 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
     public void addFirst(T item) {
         size += 1;
         Node<T> newNode = new Node<T>(item);
-        if (front == null) {
-            front = newNode;
-            back = newNode;
-        } else {
-            newNode.next = front;
-            front.prev = newNode;
-            front = newNode;
-            front.prev = null; // this line may be necessary? idk rn
-        }
+        // front -> front sentinel node <-> ... <-> back sentinel node <- back
+        Node<T> everythingElse = front.next;
+        // front -> front sentinel node <-> [ ... <-> back sentinel node <- back ]
+        // front -> front sentinel node <-> [ everythingElse ]
+        front.next = newNode;
+        // front -> front sentinel node -> newNode
+        newNode.prev = front;
+        // front -> front sentinel node <-> newNode
+        newNode.next = everythingElse;
+        // front -> front sentinel node <-> newNode -> everythingElse
+        everythingElse.prev = newNode;
+        // front -> front sentinel node <-> newNode <-> everythingElse
+        // front -> front sentinel node <-> ... <-> back sentinel node <- back
     }
 
     public void addLast(T item) {
