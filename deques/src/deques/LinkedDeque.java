@@ -13,22 +13,40 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
 
     public LinkedDeque() {
         size = 0;
-        front = new Node(0);
-        back = new Node(0);
+        // changed Leon's implementation because we don't know what type of dequeue
+        // we are going to implement, so I'll just use generic <T> for now
+        front = new Node<T>(null);
+        back = new Node<T>(null);
         front.next = back;
         back.prev = front;
     }
 
     public void addFirst(T item) {
         size += 1;
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Node<T> newNode = new Node<T>(item);
+        if (front == null) {
+            front = newNode;
+            back = newNode;
+        } else {
+            newNode.next = front;
+            front.prev = newNode;
+            front = newNode;
+            front.prev = null; // this line may be necessary? idk rn
+        }
     }
 
     public void addLast(T item) {
         size += 1;
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Node<T> newNode = new Node<T>(item);
+        if (back == null) {
+            front = newNode;
+            back = newNode;
+        } else {
+            newNode.prev = back;
+            back.next = newNode;
+            back = newNode;
+            back.next = null; // again, idk if this line is necessary
+        }
     }
 
     public T removeFirst() {
@@ -36,8 +54,14 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
             return null;
         }
         size -= 1;
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Node<T> temp = front;
+        front = front.next;
+        if (front == null) {
+            back = null;
+        } else {
+            front.prev = null;
+        }
+        return temp.value;
     }
 
     public T removeLast() {
@@ -45,16 +69,25 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
             return null;
         }
         size -= 1;
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Node<T> temp = back;
+        back = back.prev;
+        if (back == null) {
+            front = null;
+        } else {
+            back.next = null;
+        }
+        return temp.value;
     }
 
     public T get(int index) {
         if ((index >= size) || (index < 0)) {
             return null;
         }
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Node<T> temp = front;
+        for (int i = 0; i < index; i++) {
+            temp = temp.next;
+        }
+        return temp.value;
     }
 
     public int size() {
