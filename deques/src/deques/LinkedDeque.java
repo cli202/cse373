@@ -29,14 +29,12 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
         // front -> front sentinel node <-> [ ... <-> back sentinel node <- back ]
         // front -> front sentinel node <-> [ everythingElse ]
         front.next = newNode;
-        // front -> front sentinel node -> newNode
         newNode.prev = front;
-        // front -> front sentinel node <-> newNode
+        // front -> front sentinel node <-> newNode             front sentinel node <- everythingElse
         newNode.next = everythingElse;
-        // front -> front sentinel node <-> newNode -> everythingElse
         everythingElse.prev = newNode;
         // front -> front sentinel node <-> newNode <-> everythingElse
-        // front -> front sentinel node <-> ... <-> back sentinel node <- back
+        // front -> front sentinel node <-> newNode <-> ... <-> back sentinel node <- back
     }
 
     public void addLast(T item) {
@@ -58,14 +56,19 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
             return null;
         }
         size -= 1;
-        Node<T> temp = front;
-        front = front.next;
-        if (front == null) {
-            back = null;
-        } else {
-            front.prev = null;
-        }
-        return temp.value;
+        Node<T> toBeRemoved = front.next;
+        // front -> front sentinel node <-> toBeRemoved <-> ... <-> back sentinel node <- back
+        Node<T> everythingElse = toBeRemoved.next;
+        // front -> front sentinel node <-> toBeRemoved <-> [ ... <-> back sentinel node <- back ]
+        // front -> front sentinel node <-> toBeRemoved <-> [ everythingElse ]
+        toBeRemoved.next = null;
+        toBeRemoved.prev = null;
+        // front -> front sentinel node -> toBeRemoved <- everythingElse
+        front.next = everythingElse;
+        everythingElse.prev = front;
+        // front -> front sentinel node <-> everythingElse              toBeRemoved
+        return toBeRemoved.value;
+        // front -> front sentinel node <-> ... <-> back sentinel node <- back              toBeRemoved
     }
 
     public T removeLast() {
