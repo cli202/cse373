@@ -19,6 +19,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     public ArrayHeapMinPQ() {
         items = new ArrayList<>();
         size = 0;
+        for (int i = 0; i < START_INDEX; i++) {
+            items.add(new PriorityNode<>(null, -1));
+        }
     }
 
     // Here's a method stub that may be useful. Feel free to change or remove it, if you wish.
@@ -66,7 +69,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         int leftChildIndex = leftChildIndex(currIndex);
         int rightChildIndex = rightChildIndex(currIndex);
 
-        int lastIndex = size + START_INDEX;
+        int lastIndex = size + START_INDEX - 1;
         boolean hasLeftChild = leftChildIndex <= lastIndex;
         boolean hasRightChild = rightChildIndex <= lastIndex;
 
@@ -103,14 +106,16 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     @Override
     public void add(T item, double priority) {
         PriorityNode<T> newNode = new PriorityNode<>(item, priority);
-        items.add(newNode);
+        items.add(size + START_INDEX, newNode);
         percolateUp(newNode, size + START_INDEX);
         size++;
+
+
     }
 
     @Override
     public boolean contains(T item) {
-        if (item == null) {
+        if (item == null || size == 0) {
             return false;
         }
         return containsHelper(item, items.get(START_INDEX), START_INDEX);
@@ -123,8 +128,24 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (currNode.getItem().equals(item)) {
             return true;
         }
-        return containsHelper(item, items.get(leftChildIndex(currIndex)), leftChildIndex(currIndex)) ||
-            containsHelper(item, items.get(rightChildIndex(currIndex)), rightChildIndex(currIndex));
+
+        int leftChildIndex = leftChildIndex(currIndex);
+        int rightChildIndex = rightChildIndex(currIndex);
+
+        int lastIndex = size + START_INDEX - 1;
+        boolean hasLeftChild = leftChildIndex <= lastIndex;
+        boolean hasRightChild = rightChildIndex <= lastIndex;
+
+        //return false if no children nodes (no more to check)
+        if (!hasLeftChild && !hasRightChild) {
+            return false;
+        }
+
+        if (!hasRightChild) {
+            return containsHelper(item, items.get(leftChildIndex), leftChildIndex);
+        }
+        return containsHelper(item, items.get(leftChildIndex), leftChildIndex) ||
+            containsHelper(item, items.get(rightChildIndex), rightChildIndex);
     }
 
     @Override
@@ -137,7 +158,11 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         T result = items.get(START_INDEX).getItem();
         items.set(START_INDEX, items.get(size + START_INDEX - 1));
         items.remove(size + START_INDEX - 1);
-        percolateDown(items.get(START_INDEX), START_INDEX);
+        size--;
+        if (size != 0) {
+            percolateDown(items.get(START_INDEX), START_INDEX);
+        }
+
         return result;
     }
 
