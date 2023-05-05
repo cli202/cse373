@@ -1,9 +1,9 @@
 package priorityqueues;
 
-import edu.princeton.cs.algs4.ST;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @see ExtrinsicMinPQ
@@ -14,11 +14,13 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     static final int START_INDEX = 1;
 
     List<PriorityNode<T>> items;
+    HashMap<T, Integer> itemToIndex;
     int size;
 
     public ArrayHeapMinPQ() {
         items = new ArrayList<>();
         size = 0;
+        itemToIndex = new HashMap<T, Integer>();
         for (int i = 0; i < START_INDEX; i++) {
             items.add(new PriorityNode<>(null, -1));
         }
@@ -34,6 +36,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         PriorityNode<T> temp = items.get(a);
         items.set(a, items.get(b));
         items.set(b, temp);
+        itemToIndex.put(items.get(b).getItem(), b);
+        itemToIndex.put(items.get(a).getItem(), a);
     }
 
     private int leftChildIndex(int index) {
@@ -53,7 +57,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private void percolateUp(PriorityNode<T> node, int currIndex) {
         int parentIndex = parentIndex(currIndex);
-        if (parentIndex != -1) {
+        if (parentIndex >= START_INDEX) {
             PriorityNode<T> parentNode = items.get(parentIndex);
             double myPriority = node.getPriority();
             double parentPriority = parentNode.getPriority();
@@ -105,20 +109,24 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     @Override
     public void add(T item, double priority) {
+        if (itemToIndex.containsKey(item)) {
+            throw new IllegalArgumentException();
+        }
         PriorityNode<T> newNode = new PriorityNode<>(item, priority);
         items.add(size + START_INDEX, newNode);
         percolateUp(newNode, size + START_INDEX);
         size++;
-
+        itemToIndex.put(item, size + START_INDEX);
 
     }
 
     @Override
     public boolean contains(T item) {
-        if (item == null || size == 0) {
-            return false;
-        }
-        return containsHelper(item, items.get(START_INDEX), START_INDEX);
+        return itemToIndex.containsKey(item);
+        // if (item == null || size == 0) {
+        //     return false;
+        // }
+        // return containsHelper(item, items.get(START_INDEX), START_INDEX);
     }
 
     private boolean containsHelper(T item, PriorityNode<T> currNode, int currIndex) {
@@ -136,7 +144,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         boolean hasLeftChild = leftChildIndex <= lastIndex;
         boolean hasRightChild = rightChildIndex <= lastIndex;
 
-        //return false if no children nodes (no more to check)
+        //return false if no children itemToIndex (no more to check)
         if (!hasLeftChild && !hasRightChild) {
             return false;
         }
@@ -150,12 +158,23 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     @Override
     public T peekMin() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
         return items.get(START_INDEX).getItem();
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 
     @Override
     public T removeMin() {
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
         T result = items.get(START_INDEX).getItem();
+        itemToIndex.remove(result);
         items.set(START_INDEX, items.get(size + START_INDEX - 1));
         items.remove(size + START_INDEX - 1);
         size--;
@@ -168,8 +187,14 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     @Override
     public void changePriority(T item, double priority) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (!contains(item)) {
+            throw new NoSuchElementException();
+        }
+        int indexOfItem = itemToIndex.get(item);
+        PriorityNode<T> targetNode = items.get(indexOfItem);
+        targetNode.setPriority(priority);
+        percolateUp(targetNode, indexOfItem);
+        percolateDown(targetNode, itemToIndex.get(item));
     }
 
     @Override
