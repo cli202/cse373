@@ -114,10 +114,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         }
         PriorityNode<T> newNode = new PriorityNode<>(item, priority);
         items.add(size + START_INDEX, newNode);
+        itemToIndex.put(item, size + START_INDEX);
         percolateUp(newNode, size + START_INDEX);
         size++;
-        itemToIndex.put(item, size + START_INDEX);
-
     }
 
     @Override
