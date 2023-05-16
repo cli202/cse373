@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -70,7 +72,6 @@ public class ArrayHeapMinPQTests extends BaseTest {
             assertThatThrownBy(() -> pq.changePriority("Harold Hill", 7)).isInstanceOf(NoSuchElementException.class);
             assertThat(pq).isValid();
         }
-
     }
 
     @Nested

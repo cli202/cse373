@@ -6,8 +6,11 @@ import graphs.BaseEdge;
 import graphs.Graph;
 
 
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Computes shortest paths using Dijkstra's algorithm.
@@ -33,8 +36,30 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
 
     @Override
     protected Map<V, E> constructShortestPathsTree(G graph, V start, V end) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        Map<V, E> sptMap = new HashMap<>();
+        Set<V> visitedVertices = new HashSet<>();
+        Map<V, Double> distancesFromStart = new HashMap<>();
+        NaiveMinPQ<V> unknownVertices = new NaiveMinPQ<>();
+        distancesFromStart.put(start, 0.0);
+        unknownVertices.add(start, 0.0);
+        while (!visitedVertices.contains(end)) {
+            V closestVertex = unknownVertices.removeMin();
+            visitedVertices.add(closestVertex);
+            for (E edge : graph.outgoingEdgesFrom(closestVertex)) {
+                V nextVertex = edge.to();
+                if (!distancesFromStart.containsKey(nextVertex)) {
+                    distancesFromStart.put(nextVertex, Double.POSITIVE_INFINITY);
+                }
+                double oldDistance = distancesFromStart.get(nextVertex);
+                double newDistance = distancesFromStart.get(closestVertex) + edge.weight();
+                if (newDistance < oldDistance) {
+                    distancesFromStart.put(nextVertex, newDistance);
+                    sptMap.put(nextVertex, edge);
+                    unknownVertices.add(nextVertex, newDistance);
+                }
+            }
+        }
+        return sptMap;
     }
 
     @Override
