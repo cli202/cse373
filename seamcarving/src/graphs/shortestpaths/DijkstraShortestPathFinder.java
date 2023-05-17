@@ -6,10 +6,13 @@ import graphs.BaseEdge;
 import graphs.Graph;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -43,6 +46,9 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
         distancesFromStart.put(start, 0.0);
         unknownVertices.add(start, 0.0);
         while (!visitedVertices.contains(end)) {
+            if (unknownVertices.isEmpty()) {
+                return null;
+            }
             V closestVertex = unknownVertices.removeMin();
             visitedVertices.add(closestVertex);
             for (E edge : graph.outgoingEdgesFrom(closestVertex)) {
@@ -64,8 +70,32 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
 
     @Override
     protected ShortestPath<V, E> extractShortestPath(Map<V, E> spt, V start, V end) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (Objects.equals(start, end)) {
+            return new ShortestPath.SingleVertex<>(start);
+        }
+
+        if (Objects.equals(spt, null)) {
+            return new ShortestPath.Failure<>();
+        }
+        E edge = spt.get(end);
+        if (edge == null) {
+            return new ShortestPath.Failure<>();
+        }
+
+        E mostRecentEdge = spt.get(end);
+        V fromMostRecentEdge = mostRecentEdge.from();
+
+        List<E> edges = new ArrayList<>();
+        while (!Objects.equals(fromMostRecentEdge, start)) {
+            edges.add(mostRecentEdge);
+            mostRecentEdge = spt.get(fromMostRecentEdge);
+            fromMostRecentEdge = mostRecentEdge.from();
+        }
+
+        edges.add(mostRecentEdge);
+        // if runtime is bad, FIX THIS
+        Collections.reverse(edges);
+        return new ShortestPath.Success<>(edges);
     }
 
 }
