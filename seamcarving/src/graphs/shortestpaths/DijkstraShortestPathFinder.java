@@ -7,6 +7,7 @@ import graphs.Graph;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,17 +52,20 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
             }
             V closestVertex = unknownVertices.removeMin();
             visitedVertices.add(closestVertex);
-            for (E edge : graph.outgoingEdgesFrom(closestVertex)) {
-                V nextVertex = edge.to();
-                if (!distancesFromStart.containsKey(nextVertex)) {
-                    distancesFromStart.put(nextVertex, Double.POSITIVE_INFINITY);
-                }
-                double oldDistance = distancesFromStart.get(nextVertex);
-                double newDistance = distancesFromStart.get(closestVertex) + edge.weight();
-                if (newDistance < oldDistance) {
-                    distancesFromStart.put(nextVertex, newDistance);
-                    sptMap.put(nextVertex, edge);
-                    unknownVertices.add(nextVertex, newDistance);
+            Collection<E> setOfEdges = graph.outgoingEdgesFrom(closestVertex);
+            if (!Objects.equals(setOfEdges, null)) {
+                for (E edge : setOfEdges) {
+                    V nextVertex = edge.to();
+                    if (!distancesFromStart.containsKey(nextVertex)) {
+                        distancesFromStart.put(nextVertex, Double.POSITIVE_INFINITY);
+                    }
+                    double oldDistance = distancesFromStart.get(nextVertex);
+                    double newDistance = distancesFromStart.get(closestVertex) + edge.weight();
+                    if (newDistance < oldDistance) {
+                        distancesFromStart.put(nextVertex, newDistance);
+                        sptMap.put(nextVertex, edge);
+                        unknownVertices.add(nextVertex, newDistance);
+                    }
                 }
             }
         }

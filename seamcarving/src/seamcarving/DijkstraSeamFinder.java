@@ -30,7 +30,7 @@ public class DijkstraSeamFinder implements SeamFinder {
     }
 
     @Override
-    public List<Integer> findHorizontalSeam(double[][] energies) {
+    public List<Integer> findVerticalSeam(double[][] energies) {
         GrafH g = new GrafH(energies);
         ShortestPath<Vertex, Edge<Vertex>> spt = pathFinder.findShortestPath(g, g.dummyStart, g.dummyEnd);
         List<Integer> result = new ArrayList<>();
@@ -43,7 +43,7 @@ public class DijkstraSeamFinder implements SeamFinder {
     }
 
     @Override
-    public List<Integer> findVerticalSeam(double[][] energies) {
+    public List<Integer> findHorizontalSeam(double[][] energies) {
         GrafV g = new GrafV(energies);
         ShortestPath<Vertex, Edge<Vertex>> spt = pathFinder.findShortestPath(g, g.dummyStart, g.dummyEnd);
         List<Integer> result = new ArrayList<>();
@@ -84,16 +84,16 @@ public class DijkstraSeamFinder implements SeamFinder {
 
             for (int y = 0; y < array.length; y++) {
                 for (int x = 0; x < array[y].length; x++) {
-                    vertices[x][y] = new Vertex(new Point(x, y), array[x][y]);
+                    vertices[y][x] = new Vertex(new Point(x, y), array[y][x]);
                     if (y == 0) {
-                        edgesTo.get(dummyStart).add(new Edge<>(dummyStart, vertices[x][0], vertices[x][0].energy));
+                        edgesTo.get(dummyStart).add(new Edge<>(dummyStart, vertices[y][x], vertices[y][x].energy));
                     }
                 }
             }
 
             for (int y = 0; y < array.length; y++) {
                 for (int x = 0; x < array[y].length; x++) {
-                    Vertex self = vertices[x][y];
+                    Vertex self = vertices[y][x];
                     // if (!(y == 0 || x == xLast)) {
                     //     if (!edgesTo.containsKey(self)) {
                     //         edgesTo.put(self, new HashSet<>());
@@ -110,19 +110,19 @@ public class DijkstraSeamFinder implements SeamFinder {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x + 1][y + 1], vertices[x + 1][y + 1].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y + 1][x + 1], vertices[y + 1][x + 1].energy));
                     }
                     if (!(y == yLast)) {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x][y + 1], vertices[x][y + 1].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y + 1][x], vertices[y + 1][x].energy));
                     }
                     if (!(x == 0 || y == yLast)) {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x - 1][y + 1], vertices[x - 1][y + 1].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y + 1][x - 1], vertices[y + 1][x - 1].energy));
                     }
                     if (y == yLast) {
                         edgesTo.put(self, new HashSet<>());
@@ -151,41 +151,41 @@ public class DijkstraSeamFinder implements SeamFinder {
             vertices = new Vertex[array.length][array[0].length];
             dummyStart = new Vertex(new Point(-1, -1), 0);
             dummyEnd = new Vertex(new Point(-1, -1), 0);
-            int xLast = array[1].length - 1;
+            int xLast = array[0].length - 1;
             int yLast = array.length - 1;
 
             edgesTo.put(dummyStart, new HashSet<>());
             for (int y = 0; y < array.length; y++) {
                 for (int x = 0; x < array[y].length; x++) {
-                    vertices[x][y] = new Vertex(new Point(x, y), array[x][y]);
+                    vertices[y][x] = new Vertex(new Point(x, y), array[y][x]);
                     if (x == 0) {
-                        edgesTo.get(dummyStart).add(new Edge<>(dummyStart, vertices[0][y], vertices[0][y].energy));
+                        edgesTo.get(dummyStart).add(new Edge<>(dummyStart, vertices[y][x], vertices[y][x].energy));
                     }
                 }
             }
 
             for (int y = 0; y < array.length; y++) {
                 for (int x = 0; x < array[y].length; x++) {
-                    Vertex self = vertices[x][y];
+                    Vertex self = vertices[y][x];
                     if (!(y == 0 || x == xLast)) {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x + 1][y - 1],
-                            vertices[x + 1][y - 1].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y - 1][x + 1],
+                            vertices[y - 1][x + 1].energy));
                     }
                     if (x != xLast) {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x + 1][y], vertices[x + 1][y].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y][x + 1], vertices[y][x + 1].energy));
                     }
                     if (!(x == xLast || y == yLast)) {
                         if (!edgesTo.containsKey(self)) {
                             edgesTo.put(self, new HashSet<>());
                         }
-                        edgesTo.get(self).add(new Edge<>(self, vertices[x + 1][y + 1],
-                            vertices[x + 1][y + 1].energy));
+                        edgesTo.get(self).add(new Edge<>(self, vertices[y + 1][x + 1],
+                            vertices[y + 1][x + 1].energy));
                     }
                     // if (!(y == yLast)) {
                     //     if (!edgesTo.containsKey(self)) {
