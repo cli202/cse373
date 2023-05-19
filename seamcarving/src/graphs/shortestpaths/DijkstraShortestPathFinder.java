@@ -74,7 +74,7 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
 
     @Override
     protected ShortestPath<V, E> extractShortestPath(Map<V, E> spt, V start, V end) {
-        if (Objects.equals(start, end)) {
+        if (start.equals(end)) {
             return new ShortestPath.SingleVertex<>(start);
         }
 
