@@ -46,6 +46,7 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
         NaiveMinPQ<V> unknownVertices = new NaiveMinPQ<>();
         distancesFromStart.put(start, 0.0);
         unknownVertices.add(start, 0.0);
+        //Review this!!
         if (start.equals(end)) {
             sptMap.put(start, null);
             return sptMap;
