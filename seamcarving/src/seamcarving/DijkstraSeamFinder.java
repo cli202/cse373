@@ -37,6 +37,8 @@ public class DijkstraSeamFinder implements SeamFinder {
         for (Vertex v : spt.vertices()) {
             result.add((int) v.point.getY());
         }
+        result.remove(0);
+        result.remove(result.size() - 1);
         return result;
     }
 
@@ -48,6 +50,8 @@ public class DijkstraSeamFinder implements SeamFinder {
         for (Vertex v : spt.vertices()) {
             result.add((int) v.point.getX());
         }
+        result.remove(0);
+        result.remove(result.size() - 1);
         return result;
     }
 
