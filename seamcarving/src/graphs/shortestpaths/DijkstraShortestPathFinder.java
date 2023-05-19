@@ -48,7 +48,7 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
         unknownVertices.add(start, 0.0);
         while (!visitedVertices.contains(end)) {
             if (unknownVertices.isEmpty()) {
-                return null;
+                break;
             }
             V closestVertex = unknownVertices.removeMin();
             visitedVertices.add(closestVertex);
@@ -78,7 +78,7 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
             return new ShortestPath.SingleVertex<>(start);
         }
 
-        if (Objects.equals(spt, null)) {
+        if (spt == null || spt.isEmpty()) {
             return new ShortestPath.Failure<>();
         }
         E edge = spt.get(end);
