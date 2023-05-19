@@ -49,7 +49,6 @@ public class DijkstraShortestPathFinder<G extends Graph<V, E>, V, E extends Base
         if (start.equals(end)) {
             sptMap.put(start, null);
             return sptMap;
-        }
         while (!visitedVertices.contains(end)) {
             if (unknownVertices.isEmpty()) {
                 break;
