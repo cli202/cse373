@@ -502,6 +502,101 @@ public abstract class BaseMapTests extends BaseTest {
         }
     }
 
+    @Test
+    void alternatingRemoveAndIterator_yieldsCorrectEntriesEachTime_StopsAtTwo() {
+        final int size = 10;
+        Map<Integer, Integer> map = createMap();
+        Map<Integer, Integer> expected = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            map.put(i, i*i);
+            expected.put(i, i*i);
+        }
+
+        for (int i = 0; i < size; i++) {
+            map.remove(i);
+            expected.remove(i);
+            assertThat(map)
+                .as("entries yielded by iterator after removing %d/%d", i + 1, size)
+                .containsExactlyInAnyOrderEntriesOf(expected);
+        }
+    }
+
+    @Test
+    void emptyIsNotEmpty() {
+        final int size = 5;
+        Map<Integer, Integer> map = createMap();
+        Map<Integer, Integer> expected = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            map.put(i, i*i);
+            expected.put(i, i*i);
+        }
+
+        for (int i = 0; i < size; i++) {
+            map.remove(i);
+            expected.remove(i);
+            assertThat(map)
+                .as("entries yielded by iterator after removing %d/%d", i + 1, size)
+                .containsExactlyInAnyOrderEntriesOf(expected);
+        }
+    }
+
+    @Test
+    void removingFirstEntryDoesNotDeleteOtherEntries() {
+        Map<String, String> map = createMap();
+        Map<String, String> expected = new HashMap<>();
+        map.put("a", "apple");
+        map.put("b", "banana");
+        map.put("c", "cat");
+        map.remove("a");
+        expected.put("a", "apple");
+        expected.put("b", "banana");
+        expected.put("c", "cat");
+        expected.remove("a");
+        assertThat(map.entrySet()).isEqualTo(expected.entrySet());
+    }
+
+    @Test
+    void removingMiddleEntryDoesNotDeleteOtherEntries() {
+        Map<String, String> map = createMap();
+        Map<String, String> expected = new HashMap<>();
+        map.put("a", "apple");
+        map.put("b", "banana");
+        map.put("c", "cat");
+        map.remove("b");
+        expected.put("a", "apple");
+        expected.put("b", "banana");
+        expected.put("c", "cat");
+        expected.remove("b");
+        assertThat(map.entrySet()).isEqualTo(expected.entrySet());
+    }
+
+    @Test
+    void removingLastEntryDoesNotDeleteOtherEntries() {
+        Map<String, String> map = createMap();
+        Map<String, String> expected = new HashMap<>();
+        map.put("a", "apple");
+        map.put("b", "banana");
+        map.put("c", "cat");
+        map.remove("c");
+        expected.put("a", "apple");
+        expected.put("b", "banana");
+        expected.put("c", "cat");
+        expected.remove("c");
+        assertThat(map.entrySet()).isEqualTo(expected.entrySet());
+    }
+
+    @Test
+    void addingEntriesWork() {
+        Map<String, String> map = createMap();
+        Map<String, String> expected = new HashMap<>();
+        map.put("a", "apple");
+        map.put("b", "banana");
+        expected.put("a", "apple");
+        expected.put("b", "banana");
+        assertThat(map.entrySet()).isEqualTo(expected.entrySet());
+
+    }
+
     void exhaust(Iterator<?> iterator) {
         while (iterator.hasNext()) {
             iterator.next();

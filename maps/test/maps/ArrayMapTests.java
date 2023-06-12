@@ -2,6 +2,7 @@ package maps;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
